@@ -7,7 +7,6 @@ function Profile() {
   const auth = getAuth();
 
   useEffect(() => {
-    console.log(auth.currentUser);
     setUser(auth.currentUser);
   }, []);
 
