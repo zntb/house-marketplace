@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { updateDoc, doc } from 'firebase/firestore';
@@ -12,7 +12,6 @@ function Profile() {
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
-  console.log(auth.currentUser.displayName);
 
   const { name, email } = formData;
 
@@ -26,7 +25,7 @@ function Profile() {
   const onSubmit = async () => {
     try {
       if (auth.currentUser.displayName !== name) {
-        // Update display name in firebase
+        // Update display name in fb
         await updateProfile(auth.currentUser, {
           displayName: name,
         });
@@ -38,6 +37,7 @@ function Profile() {
         });
       }
     } catch (error) {
+      console.log(error);
       toast.error('Could not update profile details');
     }
   };
