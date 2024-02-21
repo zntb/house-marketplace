@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  browserLocalPersistence,
+  setPersistence,
+} from 'firebase/auth';
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
 import OAuth from '../components/OAuth';
@@ -13,8 +18,20 @@ function SignIn() {
     password: '',
   });
   const { email, password } = formData;
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const auth = getAuth();
+    // Configure persistence
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        // Persistence enabled
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error('Error setting persistence:', error);
+      });
+  }, []);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -39,6 +56,7 @@ function SignIn() {
       }
     } catch (error) {
       toast.error('Bad User Credentials!');
+      console.error('Error signing in:', error);
     }
   };
 

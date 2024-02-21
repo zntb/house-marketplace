@@ -7,20 +7,20 @@ export const useAuthStatus = () => {
   const isMounted = useRef(true);
 
   useEffect(() => {
-    if (isMounted) {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          setLoggedIn(false);
-        }
-        setCheckingStatus(false);
-      });
-    }
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!isMounted.current) return; // Check if component is mounted
+      if (!user) {
+        setLoggedIn(false);
+      }
+      setCheckingStatus(false);
+    });
 
     return () => {
       isMounted.current = false;
+      unsubscribe(); // Unsubscribe from the auth state listener
     };
-  }, [isMounted]);
+  }, []);
 
   return { loggedIn, checkingStatus };
 };
