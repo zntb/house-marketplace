@@ -1,16 +1,30 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as OfferIcon } from '../assets/svg/localOfferIcon.svg';
 import { ReactComponent as ExploreIcon } from '../assets/svg/exploreIcon.svg';
 import { ReactComponent as PersonOutlineIcon } from '../assets/svg/personOutlineIcon.svg';
+import { getAuth } from 'firebase/auth';
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = getAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!auth.currentUser);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+    });
+
+    return () => unsubscribe();
+  }, [auth]);
 
   const pathMatchRoute = (route) => {
-    if (route === location.pathname) {
-      return true;
-    }
+    return route === location.pathname;
+  };
+
+  const handleProfileClick = () => {
+    isLoggedIn ? navigate('/profile') : navigate('/sign-in');
   };
 
   return (
@@ -49,7 +63,7 @@ function Navbar() {
               Offers
             </p>
           </li>
-          <li className="navbarListItem" onClick={() => navigate('/profile')}>
+          <li className="navbarListItem" onClick={handleProfileClick}>
             <PersonOutlineIcon
               fill={pathMatchRoute('/profile') ? '#2c2c2c' : '#8f8f8f'}
               width="36px"
@@ -62,7 +76,7 @@ function Navbar() {
                   : 'navbarListItemName'
               }
             >
-              Profile
+              {isLoggedIn ? 'Profile' : 'Sign In'}
             </p>
           </li>
         </ul>
