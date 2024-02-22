@@ -7,9 +7,7 @@ import bathtubIcon from '../assets/svg/bathtubIcon.svg';
 function ListingItem({ listing, id, onDelete }) {
   // Check if listing.imgUrls exists and has elements before accessing its elements
   const imageUrl =
-    listing.imageUrls && listing.imageUrls.length > 0
-      ? listing.imageUrls[0]
-      : '';
+    listing.imgUrls && listing.imgUrls.length > 0 ? listing.imgUrls[0] : '';
 
   return (
     <li className="categoryListing">
