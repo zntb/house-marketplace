@@ -44,15 +44,15 @@ function Profile() {
   const onSubmit = async () => {
     try {
       const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) return; // Ensure user is available
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
 
-      if (formData.name !== user.displayName) {
-        await updateProfile(user, {
+      if (formData.name !== currentUser.displayName) {
+        await updateProfile(currentUser, {
           displayName: formData.name,
         });
 
-        const userRef = doc(db, 'users', user.uid);
+        const userRef = doc(db, 'users', currentUser.uid);
         await updateDoc(userRef, {
           name: formData.name,
         });
@@ -73,8 +73,7 @@ function Profile() {
   if (loading) return <p>Loading...</p>;
 
   if (!user) {
-    // Redirect to login page if user is not authenticated
-    navigate('/login');
+    navigate('/sign-in');
     return null;
   }
 
@@ -93,8 +92,8 @@ function Profile() {
           <p
             className="changePersonalDetails"
             onClick={() => {
+              changeDetails && onSubmit();
               setChangeDetails((prevState) => !prevState);
-              onSubmit();
             }}
           >
             {changeDetails ? 'done' : 'change'}
