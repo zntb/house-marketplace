@@ -93,8 +93,10 @@ function Profile() {
           <p
             className="changePersonalDetails"
             onClick={() => {
-              changeDetails && onSubmit();
-              setChangeDetails((prevState) => !prevState);
+              changeDetails &&
+                onSubmit().then(() => {
+                  setChangeDetails((prevState) => !prevState);
+                });
             }}
           >
             {changeDetails ? 'done' : 'change'}
