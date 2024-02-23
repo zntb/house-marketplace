@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css/bundle';
+import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
+import 'pure-react-carousel/dist/react-carousel.es.css';
 import { getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.config';
@@ -40,23 +39,33 @@ function Listing() {
 
   return (
     <main>
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
+      <CarouselProvider
+        naturalSlideWidth={1}
+        naturalSlideHeight={1}
+        orientation="horizontal"
+        totalSlides={3}
+        infinite={true}
+        isPlaying={true}
       >
-        {listing.imgUrls.map((url, index) => (
-          <SwiperSlide key={index}>
-            <div
-              style={{
-                background: `url(${listing.imgUrls[index]}) center no-repeat`,
-                backgroundSize: 'cover',
-              }}
-              className="swiperSlideDiv"
-            ></div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        <Slider className="slider">
+          {listing.imgUrls.map((url, index) => (
+            <Slide key={index}>
+              <div
+                style={{
+                  background: `url(${listing.imgUrls[index]})`,
+                  backgroundRepeat: 'no-repeat',
+                  objectFit: 'contain',
+                  backgroundPosition: 'center',
+                  textAlign: 'center',
+                  width: '100%',
+                  height: '50%',
+                }}
+                className="swiperSlideDiv"
+              ></div>
+            </Slide>
+          ))}
+        </Slider>
+      </CarouselProvider>
 
       <div
         className="shareIconDiv"
