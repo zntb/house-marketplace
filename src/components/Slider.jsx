@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase.config';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css/bundle';
+import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
+import 'pure-react-carousel/dist/react-carousel.es.css';
 import Spinner from './Spinner';
 
-function Slider() {
+function SliderPage() {
   const [loading, setLoading] = useState(true);
   const [listings, setListings] = useState(null);
 
@@ -47,36 +46,45 @@ function Slider() {
     listings && (
       <>
         <p className="exploreHeading">Recommended</p>
-
-        <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          slidesPerView={1}
-          pagination={{ clickable: true }}
+        <CarouselProvider
+          naturalSlideWidth={1}
+          naturalSlideHeight={1}
+          orientation="horizontal"
+          totalSlides={3}
+          infinite={true}
+          isPlaying={true}
         >
-          {listings.map(({ data, id }) => (
-            <SwiperSlide
-              key={id}
-              onClick={() => navigate(`/category/${data.type}/${id}`)}
-            >
-              <div
-                style={{
-                  background: `url(${data.imgUrls[0]}) center no-repeat`,
-                  backgroundSize: 'cover',
-                }}
-                className="swiperSlideDiv"
+          <Slider className="slider">
+            {listings.map(({ data, id }) => (
+              <Slide
+                key={id}
+                onClick={() => navigate(`/category/${data.type}/${id}`)}
               >
-                <p className="swiperSlideText">{data.name}</p>
-                <p className="swiperSlidePrice">
-                  ${data.discountedPrice ?? data.regularPrice}{' '}
-                  {data.type === 'rent' && '/ month'}
-                </p>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+                <div
+                  style={{
+                    background: `url(${data.imgUrls[0]})`,
+                    backgroundRepeat: 'no-repeat',
+                    objectFit: 'contain',
+                    backgroundPosition: 'center',
+                    textAlign: 'center',
+                    width: '100%',
+                    height: '50%',
+                  }}
+                  className="swiperSlideDiv"
+                >
+                  <p className="swiperSlideText">{data.name}</p>
+                  <p className="swiperSlidePrice">
+                    ${data.discountedPrice ?? data.regularPrice}{' '}
+                    {data.type === 'rent' && '/ month'}
+                  </p>
+                </div>
+              </Slide>
+            ))}
+          </Slider>
+        </CarouselProvider>
       </>
     )
   );
 }
 
-export default Slider;
+export default SliderPage;
