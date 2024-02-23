@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-
+import { Helmet } from 'react-helmet';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
@@ -39,6 +39,9 @@ function Listing() {
 
   return (
     <main>
+      <Helmet>
+        <title>{listing.name}</title>
+      </Helmet>
       <CarouselProvider
         naturalSlideWidth={1}
         naturalSlideHeight={1}
