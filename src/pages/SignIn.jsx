@@ -1,15 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  browserLocalPersistence,
-  setPersistence,
-} from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import OAuth from '../components/OAuth';
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
-import OAuth from '../components/OAuth';
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,20 +13,8 @@ function SignIn() {
     password: '',
   });
   const { email, password } = formData;
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const auth = getAuth();
-    // Configure persistence
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => {
-        // Persistence enabled
-      })
-      .catch((error) => {
-        // Handle errors here
-        console.error('Error setting persistence:', error);
-      });
-  }, []);
+  const navigate = useNavigate();
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -45,6 +28,7 @@ function SignIn() {
 
     try {
       const auth = getAuth();
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -55,8 +39,7 @@ function SignIn() {
         navigate('/');
       }
     } catch (error) {
-      toast.error('Bad User Credentials!');
-      console.error('Error signing in:', error);
+      toast.error('Bad User Credentials');
     }
   };
 
@@ -76,6 +59,7 @@ function SignIn() {
             value={email}
             onChange={onChange}
           />
+
           <div className="passwordInputDiv">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -85,6 +69,7 @@ function SignIn() {
               value={password}
               onChange={onChange}
             />
+
             <img
               src={visibilityIcon}
               alt="show password"
@@ -92,9 +77,11 @@ function SignIn() {
               onClick={() => setShowPassword((prevState) => !prevState)}
             />
           </div>
+
           <Link to="/forgot-password" className="forgotPasswordLink">
             Forgot Password
           </Link>
+
           <div className="signInBar">
             <p className="signInText">Sign In</p>
             <button className="signInButton">
