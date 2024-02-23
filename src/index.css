@@ -49,6 +49,18 @@ button {
   .textarea {
     padding: 0 5rem;
   }
+  .navbar {
+    top: 0;
+  }
+  .pageContainer {
+    position: absolute;
+    margin: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 40rem;
+  }
 }
 
 .textarea {
@@ -300,6 +312,9 @@ button {
   .explore {
     margin-bottom: 10rem;
   }
+  .registerLink {
+    margin-top: 0;
+  }
 }
 @media (max-height: 536) {
   .explore {
@@ -426,7 +441,7 @@ button {
 }
 @media (min-width: 1024px) {
   .categoryListingImg {
-    width: 19%;
+    width: 35%;
     height: 217px;
   }
 }
@@ -436,7 +451,8 @@ button {
 }
 @media (min-width: 1024px) {
   .categoryListingDetails {
-    width: 79%;
+    width: 65%;
+    margin-left: 2rem;
   }
 }
 
@@ -472,6 +488,26 @@ button {
 .categoryListingInfoText {
   font-weight: 500;
   font-size: 0.7rem;
+}
+
+@media (min-width: 1024px) {
+  .pageHeader {
+    text-align: center;
+    margin-top: 6rem;
+    margin-bottom: 0;
+  }
+  .category {
+    width: 60rem;
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .categoryListing {
+    width: 50rem;
+    margin-left: auto;
+  }
 }
 
 .loadMore {
@@ -617,6 +653,14 @@ button {
 
 .profile {
   margin-bottom: 10rem;
+}
+
+@media (min-width: 1024px) {
+  .profile {
+    width: 50rem;
+    margin: 0 auto;
+    margin-top: 12rem;
+  }
 }
 
 .profileHeader {
