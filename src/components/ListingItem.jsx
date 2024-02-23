@@ -4,18 +4,18 @@ import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg';
 import bedIcon from '../assets/svg/bedIcon.svg';
 import bathtubIcon from '../assets/svg/bathtubIcon.svg';
 
-function ListingItem({ listing, id, onDelete }) {
-  // Check if listing.imgUrls exists and has elements before accessing its elements
-  const imageUrl =
-    listing.imgUrls && listing.imgUrls.length > 0 ? listing.imgUrls[0] : '';
-
+function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
     <li className="categoryListing">
       <Link
         to={`/category/${listing.type}/${id}`}
         className="categoryListingLink"
       >
-        <img src={imageUrl} alt={listing.name} className="categoryListingImg" />
+        <img
+          src={listing.imgUrls[0]}
+          alt={listing.name}
+          className="categoryListingImg"
+        />
         <div className="categoryListingDetails">
           <p className="categoryListingLocation">{listing.location}</p>
           <p className="categoryListingName">{listing.name}</p>
@@ -42,7 +42,7 @@ function ListingItem({ listing, id, onDelete }) {
             <p className="categoryListingInfoText">
               {listing.bathrooms > 1
                 ? `${listing.bathrooms} Bathrooms`
-                : '1 Bedroom'}
+                : '1 Bathroom'}
             </p>
           </div>
         </div>
@@ -51,10 +51,12 @@ function ListingItem({ listing, id, onDelete }) {
       {onDelete && (
         <DeleteIcon
           className="removeIcon"
-          fill="rgb(231, 76, 60)"
+          fill="rgb(231, 76,60)"
           onClick={() => onDelete(listing.id, listing.name)}
         />
       )}
+
+      {onEdit && <EditIcon className="editIcon" onClick={() => onEdit(id)} />}
     </li>
   );
 }

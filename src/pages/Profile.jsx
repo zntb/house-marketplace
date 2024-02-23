@@ -1,65 +1,86 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
-import { updateDoc, doc } from 'firebase/firestore';
-import { db } from '../firebase.config.js';
+import { Link } from 'react-router-dom';
+import { getAuth, updateProfile } from 'firebase/auth';
+import {
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  deleteDoc,
+} from 'firebase/firestore';
+import { db } from '../firebase.config';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import ListingItem from '../components/ListingItem';
 import arrowRight from '../assets/svg/keyboardArrowRightIcon.svg';
 import homeIcon from '../assets/svg/homeIcon.svg';
 
 function Profile() {
-  const [user, setUser] = useState(null);
+  const auth = getAuth();
   const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState(null);
   const [changeDetails, setChangeDetails] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
   });
+
+  const { name, email } = formData;
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        setFormData({
-          name: user.displayName || '',
-          email: user.email || '',
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    const fetchUserListings = async () => {
+      const listingsRef = collection(db, 'listings');
 
-    return () => unsubscribe();
-  }, []);
+      const q = query(
+        listingsRef,
+        where('userRef', '==', auth.currentUser.uid),
+        orderBy('timestamp', 'desc')
+      );
+
+      const querySnap = await getDocs(q);
+
+      let listings = [];
+
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+
+      setListings(listings);
+      setLoading(false);
+    };
+
+    fetchUserListings();
+  }, [auth.currentUser.uid]);
 
   const onLogout = () => {
-    const auth = getAuth();
     auth.signOut();
     navigate('/');
   };
 
   const onSubmit = async () => {
     try {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
-
-      if (formData.name !== currentUser.displayName) {
-        await updateProfile(currentUser, {
-          displayName: formData.name,
+      if (auth.currentUser.displayName !== name) {
+        // Update display name in fb
+        await updateProfile(auth.currentUser, {
+          displayName: name,
         });
 
-        const userRef = doc(db, 'users', currentUser.uid);
+        // Update in firestore
+        const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, {
-          name: formData.name,
+          name,
         });
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error('Could not update profile details');
     }
   };
@@ -71,12 +92,22 @@ function Profile() {
     }));
   };
 
-  if (loading) return <p>Loading...</p>;
+  const onDelete = async (listingId) => {
+    try {
+      if (window.confirm('Are you sure you want to delete?')) {
+        await deleteDoc(doc(db, 'listings', listingId));
+        const updatedListings = listings.filter(
+          (listing) => listing.id !== listingId
+        );
+        setListings(updatedListings);
+        toast.success('Successfully deleted listing');
+      }
+    } catch (error) {
+      toast.error(' Listing deletion failed');
+    }
+  };
 
-  if (!user) {
-    navigate('/sign-in');
-    return null;
-  }
+  const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`);
 
   return (
     <div className="profile">
@@ -93,10 +124,8 @@ function Profile() {
           <p
             className="changePersonalDetails"
             onClick={() => {
-              changeDetails &&
-                onSubmit().then(() => {
-                  setChangeDetails((prevState) => !prevState);
-                });
+              changeDetails && onSubmit();
+              setChangeDetails((prevState) => !prevState);
             }}
           >
             {changeDetails ? 'done' : 'change'}
@@ -110,7 +139,7 @@ function Profile() {
               id="name"
               className={!changeDetails ? 'profileName' : 'profileNameActive'}
               disabled={!changeDetails}
-              value={formData.name}
+              value={name}
               onChange={onChange}
             />
             <input
@@ -118,7 +147,7 @@ function Profile() {
               id="email"
               className={!changeDetails ? 'profileEmail' : 'profileEmailActive'}
               disabled={!changeDetails}
-              value={formData.email}
+              value={email}
               onChange={onChange}
             />
           </form>
@@ -129,6 +158,23 @@ function Profile() {
           <p>Sell or rent your home</p>
           <img src={arrowRight} alt="arrow right" />
         </Link>
+
+        {!loading && listings?.length > 0 && (
+          <>
+            <p className="listingText">Your Listings</p>
+            <ul className="listingsList">
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  listing={listing.data}
+                  id={listing.id}
+                  onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </main>
     </div>
   );

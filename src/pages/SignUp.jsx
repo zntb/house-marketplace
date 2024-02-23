@@ -8,9 +8,9 @@ import {
 } from 'firebase/auth';
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase.config';
+import OAuth from '../components/OAuth';
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
-import OAuth from '../components/OAuth.jsx';
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,11 +35,13 @@ function SignUp() {
 
     try {
       const auth = getAuth();
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       const user = userCredential.user;
 
       updateProfile(auth.currentUser, {
@@ -62,7 +64,7 @@ function SignUp() {
     <>
       <div className="pageContainer">
         <header>
-          <p className="pageHeader">Welcome!</p>
+          <p className="pageHeader">Welcome Back!</p>
         </header>
 
         <form onSubmit={onSubmit}>
@@ -82,6 +84,7 @@ function SignUp() {
             value={email}
             onChange={onChange}
           />
+
           <div className="passwordInputDiv">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -91,6 +94,7 @@ function SignUp() {
               value={password}
               onChange={onChange}
             />
+
             <img
               src={visibilityIcon}
               alt="show password"
@@ -98,9 +102,11 @@ function SignUp() {
               onClick={() => setShowPassword((prevState) => !prevState)}
             />
           </div>
+
           <Link to="/forgot-password" className="forgotPasswordLink">
             Forgot Password
           </Link>
+
           <div className="signUpBar">
             <p className="signUpText">Sign Up</p>
             <button className="signUpButton">
