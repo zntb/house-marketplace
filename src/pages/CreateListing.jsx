@@ -219,7 +219,7 @@ function CreateListing() {
         <p className="pageHeader">Create a Listing</p>
       </header>
 
-      <main>
+      <main className="listingContainer">
         <form onSubmit={onSubmit}>
           <label className="formLabel">Sell / Rent</label>
           <div className="formButtons">

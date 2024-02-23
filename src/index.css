@@ -113,6 +113,7 @@ button {
   .category,
   .explore {
     margin: 3rem;
+    margin-top: 0.5rem;
   }
 }
 
@@ -494,7 +495,7 @@ button {
   .pageHeader {
     text-align: center;
     margin-top: 6rem;
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
   }
   .category {
     width: 60rem;
@@ -659,7 +660,11 @@ button {
   .profile {
     width: 50rem;
     margin: 0 auto;
-    margin-top: 12rem;
+    margin-top: 5rem;
+  }
+  .loadMore {
+    margin-top: 0;
+    margin-bottom: 2rem;
   }
 }
 
@@ -868,4 +873,18 @@ button {
   margin-left: 1rem;
   font-size: 0.8rem;
   opacity: 0.75;
+}
+
+@media (min-width: 1024px) {
+  .listingContainer {
+    margin: 0 auto;
+    width: 60rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .createListingButton {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
 }
